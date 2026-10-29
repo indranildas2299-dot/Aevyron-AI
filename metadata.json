@@ -1,0 +1,6 @@
+{
+  "name": "Aevyron — Personal Offline AI for Android",
+  "description": "Complete personal offline GGUF AI assistant, long-term memory database, and native Android JNI llama.cpp build studio for Realme P4 5G. Created by Indranil Officals.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

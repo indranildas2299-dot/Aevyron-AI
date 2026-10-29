@@ -1,0 +1,42 @@
+name: Build Aevyron Android APK (arm64-v8a)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-android-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Aevyron Source
+        uses: actions/checkout@v4
+
+      - name: Clone Upstream llama.cpp into JNI Tree
+        run: |
+          rm -rf app/src/main/cpp/llama.cpp
+          git clone --depth 1 https://github.com/ggml-org/llama.cpp.git app/src/main/cpp/llama.cpp
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK & NDK r26d
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK 26.3.11579264 & CMake 3.22.1
+        run: |
+          sdkmanager --install "ndk;26.3.11579264" "cmake;3.22.1" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Run Unit Tests & Build Debug APK (arm64-v8a for Realme P4 5G)
+        run: |
+          gradle testDebugUnitTest assembleDebug --stacktrace
+
+      - name: Upload Installable Aevyron APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aevyron-arm64-v8a-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
